@@ -1,7 +1,12 @@
-# CLALHE-YCbCr: Peningkatan Kontras Citra Berwarna Berbasis CLALHE pada Domain YCbCr
+# CLALHE-YCbCr: Peningkatan Kontras Citra Berwarna Berbasis CLALHE pada Domain YCbCr (Versi Sebelum Improvisasi)
 
-> Ekstensi Matematis Algoritma CLALHE (Mohammed & Isa, 2025) ke Domain Citra Berwarna
-> melalui Dekomposisi Ruang Warna Ortogonal YCbCr (ITU-R BT.601)
+> **Catatan Branch `clalhe-sebelum-improvisasi`:**
+> Branch ini memuat implementasi **sebelum improvisasi matematis**. Pada versi ini, algoritma CLALHE masih menggunakan formulasi murni paper Ibrahim Majid Mohammed & Nor Ashidi Mat Isa (2025):
+> - Seleksi parameter: `CIQI = (PSNR + Entropy) / (AMBE + 1e-6)` (tanpa soft-penalty AMBE).
+> - Ukuran grid: `CBD = max(2, ceil(ln(|P|)))`.
+> - Batas clip limit: `cl = max(0.01, min(cl, 10.0))`.
+>
+> Untuk versi yang telah diimprovisasi mengatasi fenomena *under-enhancement*, silakan beralih ke branch `main`.
 
 ---
 

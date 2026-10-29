@@ -48,29 +48,25 @@ def clalhe_gray(Y: np.ndarray) -> np.ndarray:
         return pure_clahe_math(Y, clip_limit=2.0, grid_size=(8, 8))
 
     N_param = sum(hist[v] for v in valleys) / len(valleys)
-    CBD = max(8, math.ceil(math.log2(len(peaks)) * 2))
+    CBD = max(2, math.ceil(math.log(len(peaks))))
     max_valley = max(hist[v] for v in valleys)
 
-    # Himpunan kandidat clip limit unik (dibatasi minimal 1.0 agar tidak under-enhancement)
+    # Himpunan kandidat clip limit unik
     candidate_cls = []
     for p in peaks:
         cl = (hist[p] + N_param) / max_valley
-        cl = max(1.0, min(cl, 10.0))
+        cl = max(0.01, min(cl, 10.0))
         candidate_cls.append(round(cl, 2))
     unique_cls = np.unique(candidate_cls)
 
-    best_ciqi, best_cl = -1e9, 2.0
+    best_ciqi, best_cl = -1.0, 2.0
     for cl in unique_cls:
         Y_tmp = pure_clahe_math(Y, clip_limit=cl, grid_size=(CBD, CBD))
 
         psnr = compute_psnr(Y, Y_tmp)
         ent = compute_entropy(Y_tmp)
-        ambe = compute_ambe(Y, Y_tmp)
-        # Formulasi berbobot adaptif:
-        # Memprioritaskan entropi (peningkatan detail) dan PSNR, 
-        # dengan toleransi pergeseran kecerahan wajar (soft-penalty pada AMBE)
-        ambe_penalty = 1.0 + max(0.0, ambe - 5.0)
-        ciqi = (psnr + 5.0 * ent) / ambe_penalty
+        ambe = compute_ambe(Y, Y_tmp) + 1e-6
+        ciqi = (psnr + ent) / ambe
 
         if ciqi > best_ciqi:
             best_ciqi, best_cl = ciqi, cl
